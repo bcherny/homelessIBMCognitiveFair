@@ -48,7 +48,7 @@
     <div id='legend' class='pin-bottomleft'>
         <div id='ramp' class="fill-light legend leaflet-control pin-bottomleft"></div>
     </div>
-    
+
     <script src='./sf_hoods.js'></script>
     <script>
 
@@ -127,7 +127,7 @@ var geojson_311;
 $.getJSON(dataUrl, function(data) {
 
     json_311 = toGeojson(data, 'point');
-    
+
     var per_neighborhood = turf.count(neighborhoods, json_311, 'total');
 
     breaks = turf.jenks(per_neighborhood, 'total', 5);
@@ -185,7 +185,7 @@ function updateInfo (props,  neighborhoods_sffind_boundaries) {
             return b.count - a.count;
         })
         for(var i = 0; i < 5; i++) {
-            if(categories[i] && categories[i].name) 
+            if(categories[i] && categories[i].name)
                 $('#issue-list').append('<li><span class="issue">'+categories[i].name+
                     '</span> <span class="issue-count">'+categories[i].count+'</span></li>');
         }
@@ -214,7 +214,16 @@ function toggleCalls () {
         geojson_311 = L.geoJson(json_311, {
             onEachFeature: function (feature, layer) {
                 var dateOpened = new Date(feature.properties.requested_datetime);
-                layer.bindPopup('<strong>Case ID:</strong> ' + feature.properties.service_request_id + '<br><strong>service_name:</strong> ' + feature.properties.service_name + '<br><strong>Request Type:</strong> ' + feature.properties.service_subtype + '<br><strong>Request Details:</strong> ' + feature.properties.service_details + '<br><strong>Status:</strong> ' + feature.properties.status_description + '<br><strong>Date Opened:</strong> ' + dateOpened);
+                var imageURL = feature.properties.media_url
+                layer.bindPopup(
+                  '<strong>Case ID:</strong> ' + feature.properties.service_request_id
+                  + '<br><strong>service_name:</strong> ' + feature.properties.service_name
+                  + '<br><strong>Request Type:</strong> ' + feature.properties.service_subtype
+                  + '<br><strong>Request Details:</strong> ' + feature.properties.service_details
+                  + '<br><strong>Status:</strong> ' + feature.properties.status_description
+                  + '<br><strong>Date Opened:</strong> ' + dateOpened
+                  + (imageURL ? '<br><img src="' + imageURL.url + '" />' : '')
+                );
             },
             pointToLayer: function (feature, latlng) {
                 return L.circleMarker(latlng, {
